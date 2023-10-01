@@ -13,7 +13,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
 
-broker_address="IP ADDRESS??"
+broker_address="172.100.10.12"
 
 print("creating new client instance")
 client = mqtt.Client("P1")

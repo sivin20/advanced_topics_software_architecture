@@ -17,4 +17,5 @@
       "report/ReflectionsTemplate/*.tex",
     ],
   },
+  "C_Cpp.errorSquiggles": "disabled",
 }
