@@ -1,28 +1,30 @@
 version: '3.8'
-networks:
-  mqtt-net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.100.10.0/24
+# networks:
+#   mqtt-net:
+#     # driver: bridge
+#     # ipam:
+#     #   driver: default
+#     #   config:
+#     #     - subnet: 172.100.10.0/24
 
 services:
 
   mosquitto:
     image: eclipse-mosquitto:latest
     ports:
-      - target: 1883
-        published: 1883
-        protocol: tcp
-        mode: host
-      - target: 9001
-        published: 9001
-        protocol: tcp
-        mode: host
-    networks:
-      mqtt-net:
-        ipv4_address: 172.100.10.10
+      - "1883:1883"
+    #   - target: 1883
+    #     published: 1883
+    #     protocol: tcp
+    #     mode: host
+      - "9001:9001"
+    #   - target: 9001
+    #     published: 9001
+    #     protocol: tcp
+    #     mode: host
+    # networks:
+    #   mqtt-net:
+        # ipv4_address: 172.100.10.10
     volumes:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
 
@@ -33,9 +35,9 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mosquitto
-    networks:
-      mqtt-net:
-        ipv4_address: 172.100.10.11
+    # networks:
+      # mqtt-net:
+        # ipv4_address: 172.100.10.11
 
   subscriber:
     image: subscriber:test
@@ -44,6 +46,6 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - mosquitto
-    networks:
-      mqtt-net:
-        ipv4_address: 172.100.10.12
+    # networks:
+      # mqtt-net:
+        # ipv4_address: 172.100.10.12

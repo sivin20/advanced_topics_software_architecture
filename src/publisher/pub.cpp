@@ -54,7 +54,7 @@
 using namespace std;
 using namespace std::chrono;
 
-const std::string DFLT_SERVER_ADDRESS{"tcp://localhost:1883"};
+const std::string DFLT_SERVER_ADDRESS{"tcp://mosquitto:1883"};
 
 // The QoS for sending data
 const int QOS = 1;
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
             if (abs(int(t - tlast)) >= DELTA_MS)
             {
                 top.publish(to_string(tlast = t));
-                // cout << "Published: " << to_string(tlast = t) << " to " << address << " " << top.get_name() << endl;
+                cout << "Published: " << to_string(tlast = t) << " to " << address << " " << top.get_name() << endl;
             }
 
             if (trun > 0 && t >= (trun + tstart))
