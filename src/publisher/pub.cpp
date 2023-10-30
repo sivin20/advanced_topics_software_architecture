@@ -50,6 +50,8 @@
 #include <chrono>
 #include <cstring>
 #include "mqtt/async_client.h"
+#include <ctime> // for time() function
+#include <iomanip>
 
 using namespace std;
 using namespace std::chrono;
@@ -59,31 +61,50 @@ const std::string DFLT_SERVER_ADDRESS{"tcp://mosquitto:1883"};
 // The QoS for sending data
 const int QOS = 1;
 
-// How often to sample the "data"
-const auto SAMPLE_PERIOD = milliseconds(5);
-
-// How much the "data" needs to change before we publish a new value.
-const int DELTA_MS = 100;
+// How often to send status
+const auto DELTA_MS = milliseconds(50);
 
 // How many to buffer while off-line
 const int MAX_BUFFERED_MESSAGES = 1200;
 
 // --------------------------------------------------------------------------
-// Gets the current time as the number of milliseconds since the epoch:
-// like a time_t with ms resolution.
+// Gets the current time as ISO timestamp
 
-uint64_t timestamp()
+std::string timestamp()
 {
     auto now = system_clock::now();
-    auto tse = now.time_since_epoch();
-    auto msTm = duration_cast<milliseconds>(tse);
-    return uint64_t(msTm.count());
+    time_t now_time_t = std::chrono::system_clock::to_time_t(now);
+    // Extract milliseconds from the time point
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+
+    // Format the time as a string in the desired ISO 8601 format
+    std::stringstream ss;
+    ss << std::put_time(std::gmtime(&now_time_t), "%Y-%m-%dT%H:%M:%S") << '.' << std::setfill('0') << std::setw(3) << milliseconds.count() << "Z";
+
+    return ss.str();
+}
+
+std::string generateRandomUID(int length)
+{
+    const std::string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    std::string uid;
+    for (int i = 0; i < length; i++)
+    {
+        int randomIndex = std::rand() % characters.length();
+        uid += characters[randomIndex];
+    }
+
+    return uid;
 }
 
 // --------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
 {
+    // Seed the random number generator with the current time
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
     // The server URI (address)
     string address = (argc > 1) ? string(argv[1]) : DFLT_SERVER_ADDRESS;
 
@@ -129,28 +150,27 @@ int main(int argc, char *argv[])
         auto top = mqtt::topic(cli, "data/time", QOS);
         cout << "Publishing data..." << endl;
 
-        while (timestamp() % DELTA_MS != 0)
-            ;
-
-        uint64_t t = timestamp(),
-                 tlast = t,
-                 tstart = t;
-
-        top.publish(to_string(t));
-
-        while (true)
+        int counter = 0;         // Initialize  counter
+        while (counter < 100000) // One hundred publishes
         {
-            this_thread::sleep_for(SAMPLE_PERIOD);
+            this_thread::sleep_for(DELTA_MS);
+            // Constructing JSON object
+            string jsonString = "{\"sensorData\": \"";
 
-            t = timestamp();
-            if (abs(int(t - tlast)) >= DELTA_MS)
-            {
-                top.publish(to_string(tlast = t));
-                cout << "Published: " << to_string(tlast = t) << " to " << address << " " << top.get_name() << endl;
-            }
+            // Generate a random number between 0 and 99
+            int sensorData = std::rand() % 100;
+            jsonString.append(to_string(sensorData));
+            jsonString.append("\",\"sensorId\": \"");
+            jsonString.append(generateRandomUID(6));
+            jsonString.append("\",\"timestamp\": \"");
+            jsonString.append(timestamp());
+            jsonString.append("\"}");
 
-            if (trun > 0 && t >= (trun + tstart))
-                break;
+            // Publishing the object to the topic
+            top.publish(jsonString);
+            // Printing said object
+            cout << jsonString << endl;
+            counter++;
         }
 
         // Disconnect
