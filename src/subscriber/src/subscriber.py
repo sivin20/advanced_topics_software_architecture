@@ -21,16 +21,16 @@ def on_message(client, userdata, msg):
     print("Converting from Json to Object")
     m_in=json.loads(m_decode) #decode json data
     print(type(m_in))
-    print("broker 2 address = ",m_in["broker2"])
+    # print("broker 2 address = ",m_in["broker2"])
 
 broker_address="mosquitto"
 
 print("creating new client instance")
 client = mqtt.Client("P1")
 print("connecting to mysql db")
-cnx = mysql.connector.connect(user='scott', password='password',
+cnx = mysql.connector.connect(user='user', password='password',
                               host='db',
-                              database='employees')
+                              database='sensorData')
 print("connecting to broker")
 client.connect(broker_address, 1883, 60)
 client.on_connect = on_connect
