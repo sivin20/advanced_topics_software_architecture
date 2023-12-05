@@ -12,56 +12,47 @@ services:
     image: eclipse-mosquitto:latest
     ports:
       - "1883:1883"
-      #   - target: 1883
-      #     published: 1883
-      #     protocol: tcp
-      #     mode: host
       - "9001:9001"
-    #   - target: 9001
-    #     published: 9001
-    #     protocol: tcp
-    #     mode: host
-    # networks:
-    #   mqtt-net:
-    # ipv4_address: 172.100.10.10
     volumes:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
 
-  db:
-    image: mysql:5.7
-    environment:
-      MYSQL_DATABASE: "sensorData"
-      MYSQL_USER: "user"
-      MYSQL_PASSWORD: "password"
-      MYSQL_ROOT_PASSWORD: "password"
-    ports:
-      - "3306:3306"
-    healthcheck:
-        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-        timeout: 2s
-        retries: 10
-
-  publisher:
-    image: publisher:test
+  fault_handler:
+    # image: fault_handler
     build:
-      context: ./publisher
+      context: ./FaultHandler
       dockerfile: Dockerfile
     depends_on:
       - mosquitto
-      - db
-    # networks:
-    # mqtt-net:
-    # ipv4_address: 172.100.10.11
 
-  subscriber:
-    image: subscriber:test
-    build:
-      context: ./subscriber
-      dockerfile: Dockerfile
-    depends_on:
-      db:
-        condition: service_healthy
-        restart: true
-    # networks:
-    # mqtt-net:
-    # ipv4_address: 172.100.10.12
+  # db:
+  #   image: mysql:5.7
+  #   environment:
+  #     MYSQL_DATABASE: "sensorData"
+  #     MYSQL_USER: "user"
+  #     MYSQL_PASSWORD: "password"
+  #     MYSQL_ROOT_PASSWORD: "password"
+  #   ports:
+  #     - "3306:3306"
+  #   healthcheck:
+  #       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+  #       timeout: 2s
+  #       retries: 10
+
+  # publisher:
+  #   image: publisher:test
+  #   build:
+  #     context: ./publisher
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - mosquitto
+  #     - db
+
+  # subscriber:
+  #   image: subscriber:test
+  #   build:
+  #     context: ./subscriber
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #       restart: true

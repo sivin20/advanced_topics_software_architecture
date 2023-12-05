@@ -1,4 +1,5 @@
 name: CI/CD Workflow
+run-name: ${{github.actor}} initiated CI/CD Pipeline 
 
   # Workflow triggers
 on:
@@ -14,9 +15,11 @@ on:
   # Environment Variables
 env:
   PACKAGE_REGISTRY_TO_USE: nico8034
-  DOCKER_IMAGE_NAME: lowercase-image-name
-  PROJECT_NAME: ProjectName
-  GROUP_NUMBER: GroupNumber #I.e  Group02
+  DOCKER_IMAGE_PUBLISHER: cpp_publisher 
+  DOCKER_IMAGE_SUBSCRIBER: python_subscriber 
+  PROJECT_NAME: BeerButtler
+  GROUP_NUMBER: Group09 #I.e  Group02
+  SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
 jobs:
   # Create artifact of repository source code to use for consistensy accross all jobs
@@ -68,7 +71,9 @@ jobs:
           path: .
       # Your logic for building the applicaiton, language dependent
       - name: Build application
-        run:  echo "build app"
+        run:  |
+          sudo apt-get update
+          sudp apt-get install gcc
       # Upload compiled artifact
       - name: Upload Build artifact
         uses: actions/upload-artifact@v3

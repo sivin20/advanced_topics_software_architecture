@@ -41,6 +41,8 @@ def on_message(client, userdata, msg):
     m_in["timestamp"] = format_timestamp(m_in["timestamp"])
     data = (m_in["sensorData"], m_in["sensorId"], m_in["timestamp"])
     print(data)
+    if data["sensorData"] < 10:
+        broadcastFault(data)
 
     cursor.execute(insert, data)
     cnx.commit()
@@ -49,6 +51,10 @@ def on_message(client, userdata, msg):
 def format_timestamp(timestamp: str):
     return re.sub("[a-zA-Z]", " ", timestamp)
 
+
+def broadcastFault(bottle):
+    client.publish("faults", bottle)
+    print("yes")
 
 # print("broker 2 address = ",m_in["broker2"])
 
