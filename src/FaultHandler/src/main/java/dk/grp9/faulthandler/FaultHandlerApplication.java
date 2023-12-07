@@ -24,7 +24,7 @@ public class FaultHandlerApplication {
 
     private final String mqttAddr = "tcp://mosquitto:1883";
     private final String clientID = "faultHandler";
-    private final String mainTopic = "faultTopic";
+    private final String mainTopic = "fault_topic";
 
     @Bean
     public IntegrationFlow inbound() {
@@ -44,14 +44,14 @@ public class FaultHandlerApplication {
         return new DirectChannel();
     }
 
-    @Bean
-    @ServiceActivator(inputChannel = "mqttInputChannel")
-    public MessageHandler handler() {
-        return message -> System.out.println(message.getPayload() );
-    }
+//    @Bean
+//    @ServiceActivator(inputChannel = "mqttInputChannel")
+//    public MessageHandler handler() {
+//        return message -> System.out.println(message.getPayload() );
+//    }
 
     private void handleMessage(Message<?> message) {
         // Your message processing logic here
-        System.out.println("Received message: " + message.getPayload().toString());
+        System.out.println("Received message: " +  new String((byte[]) message.getPayload()));
     }
 }

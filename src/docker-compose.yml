@@ -24,35 +24,35 @@ services:
     depends_on:
       - mosquitto
 
-  # db:
-  #   image: mysql:5.7
-  #   environment:
-  #     MYSQL_DATABASE: "sensorData"
-  #     MYSQL_USER: "user"
-  #     MYSQL_PASSWORD: "password"
-  #     MYSQL_ROOT_PASSWORD: "password"
-  #   ports:
-  #     - "3306:3306"
-  #   healthcheck:
-  #       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-  #       timeout: 2s
-  #       retries: 10
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: "sensorData"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: "password"
+    ports:
+      - "3306:3306"
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 5s
+        retries: 15
 
-  # publisher:
-  #   image: publisher:test
-  #   build:
-  #     context: ./publisher
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - mosquitto
-  #     - db
+  publisher:
+    image: publisher:test
+    build:
+      context: ./publisher
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
 
-  # subscriber:
-  #   image: subscriber:test
-  #   build:
-  #     context: ./subscriber
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #       restart: true
+  subscriber:
+    image: subscriber:test
+    build:
+      context: ./subscriber
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+        # restart: true

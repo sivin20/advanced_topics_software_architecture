@@ -62,7 +62,7 @@ const std::string DFLT_SERVER_ADDRESS{"tcp://mosquitto:1883"};
 const int QOS = 1;
 
 // How often to send status
-const auto DELTA_MS = milliseconds(50);
+const auto DELTA_MS = milliseconds(500);
 
 // How many to buffer while off-line
 const int MAX_BUFFERED_MESSAGES = 1200;
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
         cout << "Publishing data..." << endl;
 
         int counter = 0;         // Initialize  counter
-        while (counter < 100000) // One hundred publishes
+        while (counter < 50) // One hundred publishes
         {
             this_thread::sleep_for(DELTA_MS);
             // Constructing JSON object

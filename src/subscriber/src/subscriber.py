@@ -23,7 +23,7 @@ def on_connect(client, userdata, flags, rc):
         ") ENGINE=InnoDB")
     cursor.execute(table)
 
-    client.subscribe("data/time")
+    client.subscribe('data/time')
 
 
 # The callback for when a PUBLISH message is received from the server.
@@ -40,9 +40,10 @@ def on_message(client, userdata, msg):
     m_in = json.loads(m_decode)  # decode json data
     m_in["timestamp"] = format_timestamp(m_in["timestamp"])
     data = (m_in["sensorData"], m_in["sensorId"], m_in["timestamp"])
-    print(data)
-    if data["sensorData"] < 10:
-        broadcastFault(data)
+    # print(data)
+    # print(data[0])
+    if int(data[0]) < 10:
+        broadcastFault(m_decode)
 
     cursor.execute(insert, data)
     cnx.commit()
@@ -53,7 +54,9 @@ def format_timestamp(timestamp: str):
 
 
 def broadcastFault(bottle):
-    client.publish("faults", bottle)
+    print(bottle)
+    print(type(bottle))
+    client.publish(topic="fault_topic", payload=bottle, retain=True)
     print("yes")
 
 # print("broker 2 address = ",m_in["broker2"])
