@@ -62,7 +62,7 @@ const std::string DFLT_SERVER_ADDRESS{"tcp://mosquitto:1883"};
 const int QOS = 1;
 
 // How often to send status
-const auto DELTA_MS = milliseconds(50);
+const auto DELTA_MS = milliseconds(25);
 
 // How many to buffer while off-line
 const int MAX_BUFFERED_MESSAGES = 1200;
