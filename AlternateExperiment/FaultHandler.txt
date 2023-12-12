@@ -1,0 +1,11 @@
+2023-12-12 15:03:10 Received message: {"sensorData":"2","sensorId":"mNEtlU","timestamp":"2023-12-12T10:54:49.491Z"}
+2023-12-12 15:03:10 Received message: {"sensorData":"5","sensorId":"izktMq","timestamp":"2023-12-12T10:54:49.642Z"}
+2023-12-12 15:03:11 Received message: {"sensorData":"1","sensorId":"0my8LG","timestamp":"2023-12-12T10:54:49.843Z"}
+2023-12-12 15:03:12 Received message: {"sensorData":"1","sensorId":"92fYzR","timestamp":"2023-12-12T10:54:50.297Z"}
+2023-12-12 15:03:12 Received message: {"sensorData":"6","sensorId":"vBkeAL","timestamp":"2023-12-12T10:54:50.700Z"}
+2023-12-12 15:03:13 Received message: {"sensorData":"4","sensorId":"ycEREM","timestamp":"2023-12-12T10:54:50.902Z"}
+2023-12-12 15:03:14 Received message: {"sensorData":"4","sensorId":"1cndeI","timestamp":"2023-12-12T10:54:51.356Z"}
+2023-12-12 15:03:14 Received message: {"sensorData":"1","sensorId":"ku4RQQ","timestamp":"2023-12-12T10:54:51.456Z"}
+2023-12-12 15:03:14 Received message: {"sensorData":"5","sensorId":"HDWwDa","timestamp":"2023-12-12T10:54:51.557Z"}
+2023-12-12 15:03:15 Received message: {"sensorData":"7","sensorId":"WiurJg","timestamp":"2023-12-12T10:54:51.759Z"}
+2023-12-12 15:03:15 Received message: {"sensorData":"2","sensorId":"cebHKJ","timestamp":"2023-12-12T10:54:51.809Z"}

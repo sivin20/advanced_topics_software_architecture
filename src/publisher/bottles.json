@@ -1,0 +1,254 @@
+{
+  "bottles": [
+    {
+      "sensorData": "55",
+      "sensorId": "lpgOrj",
+      "timestamp": "2023-12-12T10:54:49.440Z"
+    },
+    {
+      "sensorData": "2",
+      "sensorId": "mNEtlU",
+      "timestamp": "2023-12-12T10:54:49.491Z"
+    },
+    {
+      "sensorData": "80",
+      "sensorId": "ZZhgBZ",
+      "timestamp": "2023-12-12T10:54:49.542Z"
+    },
+    {
+      "sensorData": "49",
+      "sensorId": "uVzLwk",
+      "timestamp": "2023-12-12T10:54:49.592Z"
+    },
+    {
+      "sensorData": "5",
+      "sensorId": "izktMq",
+      "timestamp": "2023-12-12T10:54:49.642Z"
+    },
+    {
+      "sensorData": "69",
+      "sensorId": "4ywgbY",
+      "timestamp": "2023-12-12T10:54:49.693Z"
+    },
+    {
+      "sensorData": "30",
+      "sensorId": "nI4aw9",
+      "timestamp": "2023-12-12T10:54:49.743Z"
+    },
+    {
+      "sensorData": "80",
+      "sensorId": "XWPfFc",
+      "timestamp": "2023-12-12T10:54:49.793Z"
+    },
+    {
+      "sensorData": "1",
+      "sensorId": "0my8LG",
+      "timestamp": "2023-12-12T10:54:49.843Z"
+    },
+    {
+      "sensorData": "61",
+      "sensorId": "oVigjC",
+      "timestamp": "2023-12-12T10:54:49.894Z"
+    },
+    {
+      "sensorData": "44",
+      "sensorId": "krGvXy",
+      "timestamp": "2023-12-12T10:54:49.944Z"
+    },
+    {
+      "sensorData": "73",
+      "sensorId": "jvz4id",
+      "timestamp": "2023-12-12T10:54:49.995Z"
+    },
+    {
+      "sensorData": "18",
+      "sensorId": "LfPBqb",
+      "timestamp": "2023-12-12T10:54:50.045Z"
+    },
+    {
+      "sensorData": "27",
+      "sensorId": "1HMdsV",
+      "timestamp": "2023-12-12T10:54:50.095Z"
+    },
+    {
+      "sensorData": "19",
+      "sensorId": "BnuKCY",
+      "timestamp": "2023-12-12T10:54:50.146Z"
+    },
+    {
+      "sensorData": "43",
+      "sensorId": "qnpxIM",
+      "timestamp": "2023-12-12T10:54:50.196Z"
+    },
+    {
+      "sensorData": "52",
+      "sensorId": "QPoqT1",
+      "timestamp": "2023-12-12T10:54:50.247Z"
+    },
+    {
+      "sensorData": "1",
+      "sensorId": "92fYzR",
+      "timestamp": "2023-12-12T10:54:50.297Z"
+    },
+    {
+      "sensorData": "50",
+      "sensorId": "QCbfOt",
+      "timestamp": "2023-12-12T10:54:50.348Z"
+    },
+    {
+      "sensorData": "25",
+      "sensorId": "giJutW",
+      "timestamp": "2023-12-12T10:54:50.398Z"
+    },
+    {
+      "sensorData": "78",
+      "sensorId": "1y6Gck",
+      "timestamp": "2023-12-12T10:54:50.448Z"
+    },
+    {
+      "sensorData": "62",
+      "sensorId": "TbDQ1I",
+      "timestamp": "2023-12-12T10:54:50.499Z"
+    },
+    {
+      "sensorData": "68",
+      "sensorId": "oow4Qw",
+      "timestamp": "2023-12-12T10:54:50.549Z"
+    },
+    {
+      "sensorData": "88",
+      "sensorId": "sNNzTk",
+      "timestamp": "2023-12-12T10:54:50.600Z"
+    },
+    {
+      "sensorData": "49",
+      "sensorId": "c6x2tt",
+      "timestamp": "2023-12-12T10:54:50.650Z"
+    },
+    {
+      "sensorData": "6",
+      "sensorId": "vBkeAL",
+      "timestamp": "2023-12-12T10:54:50.700Z"
+    },
+    {
+      "sensorData": "40",
+      "sensorId": "rimGwH",
+      "timestamp": "2023-12-12T10:54:50.751Z"
+    },
+    {
+      "sensorData": "86",
+      "sensorId": "a3wtEa",
+      "timestamp": "2023-12-12T10:54:50.801Z"
+    },
+    {
+      "sensorData": "80",
+      "sensorId": "oixofV",
+      "timestamp": "2023-12-12T10:54:50.852Z"
+    },
+    {
+      "sensorData": "4",
+      "sensorId": "ycEREM",
+      "timestamp": "2023-12-12T10:54:50.902Z"
+    },
+    {
+      "sensorData": "11",
+      "sensorId": "4mBkuN",
+      "timestamp": "2023-12-12T10:54:50.952Z"
+    },
+    {
+      "sensorData": "16",
+      "sensorId": "QkcObz",
+      "timestamp": "2023-12-12T10:54:51.003Z"
+    },
+    {
+      "sensorData": "11",
+      "sensorId": "ExNSF9",
+      "timestamp": "2023-12-12T10:54:51.053Z"
+    },
+    {
+      "sensorData": "94",
+      "sensorId": "IUb4UD",
+      "timestamp": "2023-12-12T10:54:51.103Z"
+    },
+    {
+      "sensorData": "41",
+      "sensorId": "oeujqV",
+      "timestamp": "2023-12-12T10:54:51.154Z"
+    },
+    {
+      "sensorData": "69",
+      "sensorId": "Ix7oH7",
+      "timestamp": "2023-12-12T10:54:51.204Z"
+    },
+    {
+      "sensorData": "50",
+      "sensorId": "HwYbRz",
+      "timestamp": "2023-12-12T10:54:51.255Z"
+    },
+    {
+      "sensorData": "93",
+      "sensorId": "lyJRgK",
+      "timestamp": "2023-12-12T10:54:51.305Z"
+    },
+    {
+      "sensorData": "4",
+      "sensorId": "1cndeI",
+      "timestamp": "2023-12-12T10:54:51.356Z"
+    },
+    {
+      "sensorData": "76",
+      "sensorId": "urB0Oy",
+      "timestamp": "2023-12-12T10:54:51.406Z"
+    },
+    {
+      "sensorData": "1",
+      "sensorId": "ku4RQQ",
+      "timestamp": "2023-12-12T10:54:51.456Z"
+    },
+    {
+      "sensorData": "36",
+      "sensorId": "wgvFC4",
+      "timestamp": "2023-12-12T10:54:51.507Z"
+    },
+    {
+      "sensorData": "5",
+      "sensorId": "HDWwDa",
+      "timestamp": "2023-12-12T10:54:51.557Z"
+    },
+    {
+      "sensorData": "47",
+      "sensorId": "HGKZXb",
+      "timestamp": "2023-12-12T10:54:51.608Z"
+    },
+    {
+      "sensorData": "41",
+      "sensorId": "CyRMSJ",
+      "timestamp": "2023-12-12T10:54:51.658Z"
+    },
+    {
+      "sensorData": "35",
+      "sensorId": "wq5Quq",
+      "timestamp": "2023-12-12T10:54:51.709Z"
+    },
+    {
+      "sensorData": "7",
+      "sensorId": "WiurJg",
+      "timestamp": "2023-12-12T10:54:51.759Z"
+    },
+    {
+      "sensorData": "2",
+      "sensorId": "cebHKJ",
+      "timestamp": "2023-12-12T10:54:51.809Z"
+    },
+    {
+      "sensorData": "12",
+      "sensorId": "wK9W6O",
+      "timestamp": "2023-12-12T10:54:51.860Z"
+    },
+    {
+      "sensorData": "86",
+      "sensorId": "MoN7CI",
+      "timestamp": "2023-12-12T10:54:51.910Z"
+    }
+  ]
+}
