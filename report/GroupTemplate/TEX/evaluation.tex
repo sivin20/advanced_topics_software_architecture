@@ -1,0 +1,184 @@
+\section{Evaluation}
+\label{sec:evaluation}
+This Section describes the evaluation of the proposed design.
+Section \ref{sec:design} introduces the design of the experiment to evaluate the system. 
+Section \ref{sec:measurements} identifies the measurements in the system for the experiment.
+Section \ref{sec:pilot_test} describes the pilot test used to compute the number of replication in the actual evaluation. 
+Section \ref{sec:analysis} presents the analysis of the results from the experiment. 
+
+\subsection{Experiment design}
+\label{sec:design}
+The experiment will test the correctness quality attribute of the QA system, which is also tightly constrained to the availability QA, meaning that the software for each production system has to perform its own task correctly, without hindering the rest of the production system. 
+This experiment is only run on the cleaning service, meaning bottles are only checked for cleanliness, and not the rest of the multitude of things that could go wrong.
+
+\subsubsection{Selected QA} 
+The QA system must be able to correctly identify bottles that are not thoroughly cleaned at a rate of \textgreater 99.9\%.
+
+\subsubsection{Experiment process}
+\begin{itemize}
+    \item The Optical sensor scans a bottle and publishes the data to an MQTT topic.
+    \item An image processing service subscribes to the topic, interprets the result. If the result is a faulty bottle, another topic is notified, so that a fault handling service can remove the entity from the production system.
+    \item Regardless of the result, it is persisted in a database, so that we have historical data of how correctly the system is functioning. Images will be stored in the database as blobs for future reference and to potentially help train an AI to assist with the image processing. Saved data will include a unique record id, cleanliness percent, certainty, imageBlob, sensorID and a timestamp.
+    \item The fault handling service removes the bottle from the production system, and persists the bottle, image blob, and reason for removal (in this experiment, only unclean). 
+\end{itemize}
+
+\subsubsection{Metadata}
+
+\begin{itemize}
+    \item \textbf{RecordID: }A specific record should be unique and traceable. Having an id for each record ensures this.
+    \item \textbf{Cleanliness percent: }Will show a number of how clean a bottle is analyzed to be. Allows operators to identify specific machines that may averagely, clean worse than others, allowing them to adjust settings and optimize parameters.
+    \item \textbf{Certainty: } Will express how certain an image processing service is of its cleanliness percent. Could be used to provide a measure of how precise a version of a potential ML library is, or whether external parameters, like lighting, around sensors are sub-optimal.
+    \item \textbf{ImageBlob: } A blob object of the image, allowing for retraining of an ML AI.
+    \item \textbf{SensorID: } The ID of the sensor which produced the image, allowing operators to identify specific sensors which might be operating sub-optimally.
+    \item \textbf{Timestamp: } A timestamp of when the sensor made its observation. Allows operators to pull data in a specific time-frame, which can be used to identify performance of specific periods, which can be used to optimize future production.
+    \item \textbf{Removal Reason: } (in a full environment) could be used to identify which fault happen the most.
+\end{itemize}
+
+
+\subsection{Measurements}
+\label{sec:measurements}
+\subsubsection{Measurement selection}
+This experiment will measure the percentage of uncleaned bottles, which are not caught by the image detection system. This percentage must be \textgreater99.9\% for the experiment to be a success. In reality, only relying on correctness is not feasible. As the QA system \emph{cannot} be a hindrance to the rest of the production system to satisfy the availability requirement, it put a severe performance requirement on the image processing service. A bottle must be identified clean or unclean, with time to spare until the next production step, such that it can be removed \emph{before} the next production step. As described in section \ref{sec:middleware_architecture}, Solution, possible bottlenecks have been addressed by separating the optical sensor, and the image processing service by using a sensor topic of a message bus. In this way, image processing could be scaled independently of the optical sensors. In a real setting, that means, that the test would likely also measure computation time of each task, to evaluate service efficiency. In this way, different versions of the image processing service could also be tested, by supplying a set of pre-identified bottles, and running them through different versions of the image processing, to see if one version is better at identifying faults than another. When running this version of the experiment, which follow the exact same procedure, the measurement instead becomes the correctness of the image-processor instead of the fault handler.
+
+\subsubsection{Justification}
+In this mock environment, a random chance could decide the time it takes to "make a calculation" of whether a bottle is clean or not, to emulate that a task may not be completed with time to spare to next step. It was however decided, that this simply did not make sense in the mock environment. A random chance would not improve the usefulness of the experiment, it would just occasionally show a wrong result. The experiment is emulating image processing in a single production step, and as such, time is not a factor. A parameter that could be introduced to emulate some variability, is a certainty parameter, that could provide the possibility of discarding bottles where the sensor is simply too uncertain. This could spark a discussion of what tolerance operators should have, around certainty. Is it better to discard bottles, when certainty is below a threshold, or do we trust the system enough, to take the chance when certainty is low. It could also be used to emulate a new AI ML model, which could be a good reason to run a correctness experiment in a real environment. However due to time constraints, the uncertainty parameter has been left out of the experiment design
+
+As such, the experiment will only include the amount of bottles produced, amount of faulty bottle produced, and the amount of faulty bottle that have been discarded.
+
+\subsection{Pilot test}
+\label{sec:pilot_test}
+
+The system designed for this experiment consists of:
+\begin{itemize}
+    \item An optical sensor
+    \item Image processing service with underlying database
+    \item A fault handling service
+    \item A message bus
+\end{itemize}
+The process follows:
+\begin{enumerate}
+    \item The optical sensor publishes the data of the bottle it has just cleaned to a MQTT Topic. The data is synthetic, and consists of sensorID, sensorData, bottleID, and a timestamp. The sensor data is a number between 0-100, and any number under 10, should be categorized as a faulty (unclean) bottle
+    \item The “image processing” service subscribes to the before mentioned topic, and takes the most recent, non processed  entry, meaning MQTT is set to “Exactly Once” handling. The image processor then analyzes the data and evaluates whether the sensorData attribute is 10 or under. If it is, it publishes the bottleID and sensorID to a “fault” MQTT topic. Regardless of the cleanliness of the bottle, data is persisted in a historical database.
+    \item The fault handling service subscribes to the “fault” topic, and as soon as it gets a new event, consisting of the bottleID, and sensorID, the bottle is removed from the production systems, such that it is not distributed to customers. The reason for including a sensorID, is to enable the ability to identify sensors which publish more faulty bottles than others. This could be due to a variety of things, like faulty sensors. It could also be used to optimize the production line in the future, if certain parts of the line are more faulty than others.
+    \item Ideally, all the bottles would have to go further down the production system, for the next step in the production, so that we can verify that a faulty bottle does not reach the next step, when identified as faulty. We have however not designed this part of the system yet.
+\end{enumerate}
+
+The experiment is started by the C++ Publisher, which emulates the optical sensor, and the size of the experiment can be set by setting the amount of bottles that should be processed, and how frequently they should appear.
+
+For the pilot test, we chose a sample size of 10.000, which provides us a sufficient size to evaluate correctness of our QA system
+
+
+
+\subsection{Result analysis}
+\label{sec:analysis}
+%data analysis and interpretation
+A total of three experiments were run, to ensure that there is enough data to extensively analyze the results.\\
+The results of our first experiment can be summed up as follows:
+\begin{table}[h]
+    \centering
+    \caption{Experiment I results}
+    \begin{tabular}{lr}
+        \toprule
+        \textbf{Description} & \textbf{Value} \\
+        \midrule
+        Size & 10,000 \\
+        Entries in Historic Database & 9,395 \\
+        Entries tagged as clean & 8,470 \\
+        Entries tagged as unclean & 925 \\
+        Entries detected by fault system & 925 \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:ExpI}
+\end{table}
+\\
+From the first results, as seen in table \ref{tab:ExpI}, of our experiment described in section \ref{sec:pilot_test}, we can identify that our fault detection system is, in terms of our measurement, operating correctly, and that all faulty bottles have been identified and handled, meaning that no faulty bottles will reach the consumer. We can however also identify a rather large problem in this first test-run. Of our sample size of 10.000, only 9395 of those samples are persisted in the historic database, meaning there is a drop of 605 samples which tells us that somewhere in the process we lose about 6\% of our data. Due to this error rate, we adjusted some parameters, including making sure that the publisher would wait for the mysql database to be healthy, by also including a health check in the docker compose. After this, we ran the experiment 2 more times. 
+\\\\
+The results of our second experiment can be seen in table \ref{tab:ExpII}:
+\begin{table}[h]
+    \centering
+    \caption{Experiment II results}
+    \begin{tabular}{lr}
+        \toprule
+        \textbf{Description} & \textbf{Value} \\
+        \midrule
+        Size & 10,000 \\
+        Entries in Historic Database & 9993 \\
+        Entries tagged as clean & 8967 \\
+        Entries tagged as unclean & 1026 \\
+        Entries detected by fault system & 1026 \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:ExpII}
+\end{table}
+\\\\
+The results of our third experiment can be seen in table \ref{tab:ExpIII}:
+\begin{table}[h]
+    \centering
+    \caption{Experiment III results}
+    \begin{tabular}{lr}
+        \toprule
+        \textbf{Description} & \textbf{Value} \\
+        \midrule
+        Size & 10,000 \\
+        Entries in Historic Database & 9989 \\
+        Entries tagged as clean & 9004 \\
+        Entries tagged as unclean & 985 \\
+        Entries detected by fault system & 985 \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:ExpIII}
+\end{table}
+\\\\
+%system performance evaluation
+%Quality assurance and data integrity
+Looking at the data we received from the first run of the experiment and compare that data to the results of the second and third experiment, we can see a clear difference in entries in the historic database. 
+The lack of entries in the historic database in the first experiment is something we see in a much lower degree in further tests of the experiment and we can exclude the possibility of the publisher not publishing 10.000 entries, as we made sure to include a counter that the producer would announce. Along with this, the amount of published messages could also be verified by by our logging. For testing purposes we made sure to log each and every message to be published in a format like in listing \ref{lst:log}.
+    
+\begin{lstlisting}[label=lst:log, caption=Logging format for verification]
+n=1 ...
+2. {"data": "84", "sId": "3..", "t": "2."}
+2. {"data": "39", "sId": "u..", "t": "2."}
+2. {"data": "46", "sId": "N..", "t": "2."}
+2. {"data": "3",  "sId": "o..", "t": "2."}
+2. {"data": "94", "sId": "j..", "t": "2."}
+2. {"data": "27", "sId": "z..", "t": "2."}
+2. {"data": "43", "sId": "i..", "t": "2."}
+... n=10.000
+\end{lstlisting}
+
+The first \textit{"2."} is a timestamp made by our logger. The \textit{sensorData} field (shortened to \textit{data}) shows the cleanliness of the bottle. The \textit{sensorID} (shortened to \textit{sId}) shows the "sensor" that produced the image. The \textit{timestamp} (shortened to \textit{t} shows the sensor-registered time at image production. Verification was as simple as filtering the logs, copying, and pasting them in a text editor and verifying the amount of line, which counted to 10.000.
+We can also conclude, that the issue is not with the fault handler, as it has the same amount of entries, as the subscriber has amount of identified faults. That means, that the error in regard to the entries in the historic database in the first test is likely located between the publisher, subscriber and database.
+
+
+
+The rest of the logged data in the tests largely mimic each other. We can see that the test results show a high level of similitude and there aren't any issues with faulty bottles not being registered. For all three tests every unclean bottle in our database, gets caught by the fault detection system and thus our goal of creating a system that detects \textgreater99.9\% of the faulty bottles is met.
+
+Because the data in all three tests are so similar, we can also be fairly certain that these tests aren't just lucky outliers that just happens to coincidentally prove that our system works. The similarity helps assert the data as consistent and also underlines that the system is reliable when it comes to registering and handling faulty bottles.
+
+For good measure and to establish absolute certainty that our system works as intended, we decided to run an alternative experiment on the second form of measurement as described in section \ref{sec:measurements}, where the system instead measures the correctness of the image processor. To do this, a predefined array of bottle objects were created, consisting of 50 bottles, 11 of which were faulty. The publisher was then modified to read from this array, instead of produce new bottles. This experiment yielded the results shown in table \ref{tab:AltExp}.
+
+To further support data from the previous tests, we see that this test proves that the image processor works as intended as the predefined 11 faulty bottles were all tagged as unclean. But in contrary to the previous experiments all 50 of our entries were recorded in the alternate experiment. The disappearing data issue from the first experiments is no longer present, so lets dive into why that is.
+\begin{table}[h]
+    \centering
+    \caption{Alternate Experiment Result}
+    \begin{tabular}{lr}
+        \toprule
+        \textbf{Description} & \textbf{Value} \\
+        \midrule
+        Size & 50 \\
+        \hline
+        Predefined clean & 39 \\
+        Predefined faults & 11 \\
+        \hline
+        Entries tagged as clean & 39 \\
+        Entries tagged as unclean & 11 \\
+        Entries detected by fault system & 11
+        \bottomrule
+    \end{tabular}
+    \label{tab:AltExp}
+\end{table}
+
+%Tålmodighed når man opretter et topic fordi den er langsom (Kan være en grund til "missing inpunt in historic database")
+The team decided to comb through previous data, realizing, that the logs would show the publisher publishing before it would log the "Connected" message, signifying a connection to the MQTT bus and topic, which could mean that the publisher was trying to publish messages before the topic was ready. A simple way to test this was to "sleep" the thread for a short amount of time, before publishing. Doing this yielded the desired results and 100\% of the data would be recorded in the historic database. Even though "sleeping" the thread yielded the proper results, observing the data shown in the first 3 experiments, \ref{tab:ExpI}, \ref{tab:ExpII} \& \ref{tab:ExpIII}, still shows that the test results mirror the results of the alternate experiment \ref{tab:AltExp}, where the entirety of the data got processed.
+
+Although we located the fault that caused some of the data to be lost, it is worth referring back to our second research question, to emphasize that running a distributed system like ours brings a necessary trade off. This trade-off being that it is more difficult to locate where faults arise because there are more points of failure. And it shows in our work as well, because it took us more than three test-runs of the experiment to realize why some of the data got lost.

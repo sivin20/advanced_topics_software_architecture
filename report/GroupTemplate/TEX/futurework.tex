@@ -1,0 +1,13 @@
+\section{Future work}
+
+
+As our experiment showed, somewhere along the testing of our system irregularities occurred. The experiment proves that there is room for improvements. Notably we experienced missing requests/objects in the historic database, which was identified to be caused by a non-ready MQTT bus/topic. This is a clear indicator of a place where a heartbeat or health-check could be used. Currently, the solution is to wait two and a half seconds before beginning to publish messages. This is however unreliable as it is not guaranteed to be ready in that amount of time. The publisher should wait until the MQTT bus/topic reports that it is ready either passively (heartbeat) or actively (health-check). 
+
+Obvious future work lies in applying learned principles here to the rest of the production system. The image processing and fault handling is built on principles that ensure high availability and interoperability while allowing for easy scaling meaning the QA system should be easily applicable to other parts of the system. 
+
+Next steps include: the label printer, bottle filler and the bottle capper. 
+
+Another thing that could be worked on, is actual image processing. While the producer system is more of a proof-of-concept setup, the experiments we conducted could actually be used to measure a whole load of measurements. Future work could include comparing different versions or models. Or it could be used to compare different image processing frameworks/libraries or even implementation in different languages, measuring for processing speed and correctness. Generally, the experiment design allows for testing for a multitude of things, depending on which part is exchanged. The setup created could be treated as a baseline, as it has been proved to work as intended. It could be interesting to test whether Kafka could be used instead of or along side MQTT, as it handles being distributed really well. The experiment could vary with what velocity and size data is published, to see which bus handles different sizes best. Databases could also be tested for performance and scalability by also varying the before-mentioned properties of transmitted data   
+
+The CI/CD pipeline is also incredibly limited, and is currently more in a state of "this could be used" than actually ready to use. Implementing a fully working CI/CD pipeline is high on the priority list of future work.
+

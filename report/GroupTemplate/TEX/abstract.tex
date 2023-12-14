@@ -1,0 +1,9 @@
+\begin{abstract}
+%%%%%%%%%%%%%%%%%% Max 970 signs without space %%%%%%%%%%%%%%%%%%
+This report describes the design and evaluation of an Industry 4.0  architecture for a production system for producing bottled beer, focusing on a quality assurance system. The QA system aims to identify faulty bottles. If a bottle is identified as faulty, an alert is sent to a fault handling service for removal. The results of the system are persisted in a historical database allowing potential training of an AI. Evaluation of the system focuses on the correctness quality attribute, requiring that faulty bottles are correctly identified at a rate of \textgreater99.9\%. An experiment is conducted to test the QA system, which involves the optical sensor publishing data to an MQTT topic, that is then processed by the image processing service. The results show that it correctly detects faulty bottles. Another experiment with controlled values is also conducted which confirms the accuracy of the image processor. The document discusses considerations for deployment, such as using a distributed architecture. The proposed architecture demonstrates reliability and effectiveness in identifying and handling faulty bottles in the production process.
+
+\end{abstract}
+
+\begin{IEEEkeywords}
+Industry 4.0; Correctness; Quality Assurance; Availability; Interoperability; Deployability; Service-oriented; Distributed; Architecture;
+\end{IEEEkeywords}

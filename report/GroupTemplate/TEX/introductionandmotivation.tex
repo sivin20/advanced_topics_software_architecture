@@ -1,0 +1,18 @@
+\section{Introduction and Motivation}
+%Introduction and motivate the problem
+Industry 4.0 is a recent advancement in industrial production environments, where the notion of a "production line" is substituted with the notion of a "production system" in which individual components of the systems are inter-operable, to ensure constant availability, while enabling continuous delivery. 
+
+To demonstrate an example of a an architecture usable in an Industry 4.0, this paper will describe the emulation of a beer bottling production system, in which the system has 4 steps. Cleaning, labeling, filling and capping. Each of these steps, will have to adhere to before mentioned requirements, to ensure a true I4.0 architecture. 
+
+For this emulation to make sense, some assumptions have been made. First of all, it is assumed that the beer has been brewed. The system is only concerned with tapping beer into bottles. Also, the label is printed directly on the bottle, meaning that different types of beer can be in production at the same time. This also means, that a single bottle is identifiable. This is relevant for the quality assurance system, which will be a continuous systems, that will ensure no faulty beer reaches distribution, without ever disturbing/halting production. This means that the QA system will be constrained to the availability requirement.
+
+At the end of this project, a mock system of the beer production system, has been made with mock services, adhering to an architecture that complies with I4.0 principles. The project will be made according to 2 use cases and quality attribute scenarios, of specific requirements of the system.
+
+The structure of the paper is as follows. 
+Section \ref{sec:problem} outlines the research question and the research approach. 
+%to analyze the research question and evaluate our results.
+Section \ref{sec:related_work} describes similar work in the field and how our contribution fits the field.
+Section \ref{sec:use_case} presents a production reconfiguration use case.
+The use case serves as input to specify a reconfigurability QA requirement in Section \ref{sec:qas}.
+Section \ref{sec:middleware_architecture} introduces the proposed reconfigurable middleware software architecture design.
+Section \ref{sec:evaluation} evaluates the proposed middleware on realistic equipment in the I4.0 lab and analyzes the results against the stated QA requirement.  
