@@ -52,9 +52,15 @@
 #include "mqtt/async_client.h"
 #include <ctime> // for time() function
 #include <iomanip>
+#include "rapidjson/document.h"
+#include "rapidjson/istreamwrapper.h"
+#include "rapidjson/writer.h"
+
+#include <fstream>
 
 using namespace std;
 using namespace std::chrono;
+using namespace rapidjson;
 
 const std::string DFLT_SERVER_ADDRESS{"tcp://mosquitto:1883"};
 
@@ -62,7 +68,8 @@ const std::string DFLT_SERVER_ADDRESS{"tcp://mosquitto:1883"};
 const int QOS = 1;
 
 // How often to send status
-const auto DELTA_MS = milliseconds(25);
+const auto DELTA_MS = milliseconds(100);
+const auto MS = milliseconds(2500);
 
 // How many to buffer while off-line
 const int MAX_BUFFERED_MESSAGES = 1200;
@@ -84,6 +91,13 @@ std::string timestamp()
     return ss.str();
 }
 
+std::string convertRapidJSONValueToString(const rapidjson::Value& value) {
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    value.Accept(writer);
+    return buffer.GetString();
+}
+
 std::string generateRandomUID(int length)
 {
     const std::string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -98,13 +112,12 @@ std::string generateRandomUID(int length)
     return uid;
 }
 
+
+
 // --------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
 {
-    // Seed the random number generator with the current time
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
     // The server URI (address)
     string address = (argc > 1) ? string(argv[1]) : DFLT_SERVER_ADDRESS;
 
@@ -148,32 +161,35 @@ int main(int argc, char *argv[])
         cli.connect(connOpts);
 
         auto top = mqtt::topic(cli, "data/time", QOS);
+        this_thread::sleep_for(MS);
         cout << "Publishing data..." << endl;
 
-        int counter = 0;         // Initialize  counter
-        while (counter < 10000) // One hundred publishes
-        {
+        // Json file
+        std::ifstream ifs("bottles.json");
+
+        rapidjson::IStreamWrapper isw(ifs);
+
+// Parse the JSON document
+        rapidjson::Document document;
+        document.ParseStream(isw);
+
+// Access the "bottles" array
+        const rapidjson::Value& bottles = document["bottles"];
+// Iterate over array
+        for (rapidjson::SizeType i = 0; i < bottles.Size(); ++i) {
+            const rapidjson::Value& bottle = bottles[i];
+
+//            top.publish(bottle)
+            const std::string payload = convertRapidJSONValueToString(bottle);
+            top.publish(payload.c_str(), payload.size());
+
+            cout << payload << endl;
+//            std::cout << std::endl; // Add a newline between each bottle
             this_thread::sleep_for(DELTA_MS);
-            // Constructing JSON object
-            string jsonString = "{\"sensorData\": \"";
-
-            // Generate a random number between 0 and 99
-            int sensorData = std::rand() % 100;
-            jsonString.append(to_string(sensorData));
-            jsonString.append("\",\"sensorId\": \"");
-            jsonString.append(generateRandomUID(6));
-            jsonString.append("\",\"timestamp\": \"");
-            jsonString.append(timestamp());
-            jsonString.append("\"}");
-
-            // Publishing the object to the topic
-            top.publish(jsonString);
-            // Printing said object
-            cout << jsonString << endl;
-            counter++;
         }
 
         // Disconnect
+        this_thread::sleep_for(MS);
         cout << "\nDisconnecting..." << endl;
         cli.disconnect()->wait();
         cout << "  ...OK" << endl;
